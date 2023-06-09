@@ -1,7 +1,7 @@
 import { useState } from "react";
 import server from "./server";
 
-function Transfer({ timestamp, setTimestamp, recipient, setRecipient, amount, setAmount, signature, setSignature }) {
+function Transfer({ message, setMessage, signature, setSignature }) {
 
   const setValue = (setter) => (evt) => setter(evt.target.value);
 
@@ -9,14 +9,11 @@ function Transfer({ timestamp, setTimestamp, recipient, setRecipient, amount, se
     evt.preventDefault();
 
     try {
-      const {
-        data: { balance },
-      } = await server.post(`send`, {
+      const resp = await server.post(`send`, {
         signature: signature,
-        amount: parseInt(amount),
-        recipient,
-        timestamp,
+        message: message,
       });
+      alert(resp.statusText);
     } catch (ex) {
       alert(ex.response.data.message);
     }
@@ -27,40 +24,24 @@ function Transfer({ timestamp, setTimestamp, recipient, setRecipient, amount, se
       <h1>Send Transaction</h1>
 
       <label>
-        Recipient
-        <input
-          value={recipient}
-          onChange={setValue(setRecipient)}
-        ></input>
-      </label>
-
-      <label>
-        Send Amount
-        <input
-          placeholder="1, 2, 3..."
-          value={amount}
-          onChange={setValue(setAmount)}
-        ></input>
-      </label>
-
-      <label>
-        Timestamp
-        <input
-          value={timestamp}
-          type="number"
-          onChange={setValue(setTimestamp)}
-        ></input>
+        Message
+        <textarea
+          value={message}
+          onChange={setValue(setMessage)}
+          rows="8"
+        ></textarea>
       </label>
 
       <label>
         Signature
-        <input
+        <textarea
           value={signature}
           onChange={setValue(setSignature)}
-        ></input>
+          rows="8"
+        ></textarea>
       </label>
 
-      
+
 
       <input type="submit" className="button" value="Transfer" />
     </form>

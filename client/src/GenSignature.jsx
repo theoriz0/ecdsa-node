@@ -7,10 +7,10 @@ function hashMessage(message) {
     return keccak256(utf8ToBytes(message));
 }
 
-function GenSignature({ setTransSignature, setTransRecipient, setTransAmount, setTransTimestamp }) {
+function GenSignature({ setTransSignature, setTransMessage }) {
 
     const [signature, setSignature] = useState("");
-    const [amount, setAmount] = useState(0);
+    const [amount, setAmount] = useState("");
     const [recipient, setRecipient] = useState("");
     const [timestamp, setTimestamp] = useState("");
     const [privateKey, setPrivateKey] = useState("");
@@ -19,24 +19,27 @@ function GenSignature({ setTransSignature, setTransRecipient, setTransAmount, se
 
     const genSignature = async (evt) => {
         evt.preventDefault();
-        setTimestamp((new Date()).getTime());
+        const now = (new Date()).getTime()
+        setTimestamp(now);
         const message = {};
-        message.timestamp = timestamp;
+        message.timestamp = now;
         message.recipient = recipient;
-        message.amount = amount;
+        message.amount = parseInt(amount);
         const messageJSONStr = JSON.stringify(message);
         const hashedMessage = hashMessage(messageJSONStr);
         // whether the recovered bit should be included in the result.
         const signature = secp256k1.sign(hashedMessage, privateKey);
-        setSignature(signature.toCompactHex());
-        setTransAmount(amount);
-        setTransRecipient(recipient);
-        setTransSignature(signature);
-        setTransTimestamp(timestamp);
+        console.log(signature);
+        const sigH = signature.toCompactHex()
+        // const recoveredSig = secp256k1.Signature.fromCompact(sigH);
+        // console.log(recoveredSig);
+        setSignature(sigH);
+        setTransMessage(messageJSONStr);
+        setTransSignature(sigH);
     }
 
     return (
-        <div className="container wallet">
+        <div className="container genSig">
             <h1>Generate Signature (Local)</h1>
             <p>At local, no interact with server.</p>
             <form onSubmit={genSignature}>

@@ -19,16 +19,29 @@ function Wallet() {
     }
   }
 
+  async function onClick(evt) {
+    evt.preventDefault();
+    if (address) {
+      const {
+        data: { balance },
+      } = await server.get(`balance/${address}`);
+      setBalance(balance);
+    } else {
+      setBalance(0);
+    }
+  }
+
   return (
     <div className="container wallet">
-      <h1>Your Wallet</h1>
+      <h1>Wallet Balance</h1>
 
       <label>
         Wallet Address
-        <input placeholder="Type an address, for example: 0x1" value={address} onChange={onChange}></input>
+        <input id="address" placeholder="Type an address, for example: 0x1" value={address} onChange={onChange}></input>
       </label>
 
       <div className="balance">Balance: {balance}</div>
+      <input type="button" className="button" value="Refresh" onClick={onClick}/>
     </div>
   );
 }
