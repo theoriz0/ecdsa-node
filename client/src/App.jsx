@@ -1,21 +1,23 @@
 import Wallet from "./Wallet";
 import Transfer from "./Transfer";
+import GenSignature from "./GenSignature"
 import "./App.scss";
 import { useState } from "react";
 
 function App() {
-  const [balance, setBalance] = useState(0);
-  const [address, setAddress] = useState("");
+  const [signature, setSignature] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [recipient, setRecipient] = useState("");
+  const [timestamp, setTimestamp] = useState("");
 
   return (
     <div className="app">
-      <Wallet
-        balance={balance}
-        setBalance={setBalance}
-        address={address}
-        setAddress={setAddress}
-      />
-      <Transfer setBalance={setBalance} address={address} />
+      <Wallet />
+      <GenSignature setTransSignature={setSignature}
+       setTransAmount={setAmount} setTransRecipient={setRecipient}
+       setTransTimestamp={setTimestamp}/>
+      <Transfer recipient={recipient} setRecipient={setRecipient} amount={amount} setAmount={setAmount}
+       timestamp={timestamp} setTimestamp={setTimestamp} signature={signature} setSignature={setSignature}/>
     </div>
   );
 }

@@ -1,9 +1,7 @@
 import { useState } from "react";
 import server from "./server";
 
-function Transfer({ address, setBalance }) {
-  const [sendAmount, setSendAmount] = useState("");
-  const [recipient, setRecipient] = useState("");
+function Transfer({ timestamp, setTimestamp, recipient, setRecipient, amount, setAmount, signature, setSignature }) {
 
   const setValue = (setter) => (evt) => setter(evt.target.value);
 
@@ -14,11 +12,11 @@ function Transfer({ address, setBalance }) {
       const {
         data: { balance },
       } = await server.post(`send`, {
-        sender: address,
-        amount: parseInt(sendAmount),
+        signature: signature,
+        amount: parseInt(amount),
         recipient,
+        timestamp,
       });
-      setBalance(balance);
     } catch (ex) {
       alert(ex.response.data.message);
     }
@@ -29,22 +27,40 @@ function Transfer({ address, setBalance }) {
       <h1>Send Transaction</h1>
 
       <label>
-        Send Amount
-        <input
-          placeholder="1, 2, 3..."
-          value={sendAmount}
-          onChange={setValue(setSendAmount)}
-        ></input>
-      </label>
-
-      <label>
         Recipient
         <input
-          placeholder="Type an address, for example: 0x2"
           value={recipient}
           onChange={setValue(setRecipient)}
         ></input>
       </label>
+
+      <label>
+        Send Amount
+        <input
+          placeholder="1, 2, 3..."
+          value={amount}
+          onChange={setValue(setAmount)}
+        ></input>
+      </label>
+
+      <label>
+        Timestamp
+        <input
+          value={timestamp}
+          type="number"
+          onChange={setValue(setTimestamp)}
+        ></input>
+      </label>
+
+      <label>
+        Signature
+        <input
+          value={signature}
+          onChange={setValue(setSignature)}
+        ></input>
+      </label>
+
+      
 
       <input type="submit" className="button" value="Transfer" />
     </form>
