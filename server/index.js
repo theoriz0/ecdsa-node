@@ -32,6 +32,14 @@ app.get("/balance/:address", (req, res) => {
 app.post("/send", (req, res) => {
   const { signature, message } = req.body;
 
+  // check if signature is used.
+  if (transactions.includes(signature)) {
+    res.status(400).send({ message: "Signature has been used, please re-generate." });
+    return
+  } else {
+    transactions.push(signature);
+  }
+
   // get and verify public key from signature.
   const signatureObj = secp256k1.Signature.fromCompact(signature);
   signatureObj.recovery = 0;
@@ -43,14 +51,6 @@ app.post("/send", (req, res) => {
   if (!isValid) {
     res.status(400).send({ message: "Invalid signature!" });
     return
-  }
-
-  // check if signature is used.
-  if (transactions.includes(signature)) {
-    res.status(400).send({ message: "Signature has been used, please re-generate." });
-    return
-  } else {
-    transactions.push(signature);
   }
   
   const messageObj = JSON.parse(message);
